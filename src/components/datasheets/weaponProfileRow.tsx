@@ -7,14 +7,7 @@ import { Button } from '../ui/button';
 import { Edit, EllipsisIcon, Trash } from 'lucide-react';
 import ModifiersDialog from './weaponModifiersDialog';
 import { Input } from '../ui/input';
-
-const ModifierChip = ({ modifier, value }: { modifier: string, value: boolean | number | string }) => (
-  <Badge variant="default" className="font-normal">
-    {
-      typeof value === 'boolean' ? camelCaseToString(modifier) : `${camelCaseToString(modifier)}: ${value}`
-    }
-  </Badge>
-);
+import ModifierChip from './modifierChip';
 
 type WeaponProfileRowProps = {
   profile: WeaponProfile;
@@ -28,11 +21,15 @@ type WeaponProfileRowProps = {
 export default function WeaponProfileRow({ profile, handleUpdateWeaponProfile, handleUpdateWeaponModifiers, handleRemoveProfile, statKeys, statHeaders }: WeaponProfileRowProps) {
   const [dropdownOpen, setDropdownOpen] = React.useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
+
+  // Dynamic grid template to match the number of stats exactly
+  const gridTemplateColumns = `minmax(0, 2.5fr) repeat(${statKeys.length}, minmax(2.5rem, 1fr)) 2.5rem`;
+
   return (
     <div key={profile.id} className="rounded-lg transition-colors">
 
       {/* --- Main Profile Row (replaces TableRow) --- */}
-      <div className="grid grid-cols-[minmax(0,2.5fr)_repeat(6,minmax(0,1fr))] gap-1 md:gap-2 items-center ">
+      <div className="grid gap-1 md:gap-2 items-center" style={{ gridTemplateColumns }}>
 
         {/* Name Input (replaces TableCell) */}
         <div>
@@ -42,15 +39,15 @@ export default function WeaponProfileRow({ profile, handleUpdateWeaponProfile, h
             value={profile.name}
             onChange={(e) => handleUpdateWeaponProfile(profile.id, 'name', e)}
             placeholder="Weapon Name"
-            className="text-xs! md:text-sm"
+            className="!text-xs md:text-sm"
           />
         </div>
 
         {/* Stat Inputs (replaces mapping TableCells) */}
-        {statKeys.map(statKey => (
-          <div key={statKey} className="text-center min-w-8">
+        {statKeys.map((statKey, index) => (
+          <div key={statKey} className="text-center">
             <Input
-              className='text-xs! md:text-md text-center'
+              className='!text-xs md:text-sm text-center px-1'
               type="text"
               name={statKey}
               value={profile[statKey]}
@@ -60,7 +57,7 @@ export default function WeaponProfileRow({ profile, handleUpdateWeaponProfile, h
         ))}
 
         {/* Actions (replaces TableCell) */}
-        <div className="flex justify-end items-center">
+        <div className="flex justify-center items-center pb-0.5 md:pb-0">
           <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="icon">

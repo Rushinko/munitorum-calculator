@@ -4,8 +4,9 @@ export type CalculationResult = {
   attacker?: string;
   defender?: string;
   weapon?: string;
-  attacks: number | DiceProbability[]
-  mortalWounds: DiceProbability[]
+  isVariableAttacks?: boolean;
+  attacks: DiceProbability[];
+  mortalWounds: DiceProbability[];
   hits: DiceProbability[];
   wounds: DiceProbability[];
   unsaved: DiceProbability[];

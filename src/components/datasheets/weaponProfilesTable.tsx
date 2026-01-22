@@ -43,16 +43,19 @@ export default function WeaponProfilesList({ profiles, onProfileChange, onModifi
     onProfileRemove(id);
   };
 
+  // Dynamic grid template to match the row exactly
+  const gridTemplateColumns = `minmax(0, 2.5fr) repeat(${statKeys.length}, minmax(2.5rem, 1fr)) 2.5rem`;
+
   return (
     <div className="space-y-2 w-full">
-      {/* ---- HEADERS (replaces TableHeader) ---- */}
-      <div className="grid grid-cols-[minmax(0,2.5fr)_repeat(6,minmax(0,1fr))] gap-1 md:gap-2 items-center border-b border-input">
-        <div className="text-xs md:text-sm font-semibold text-muted-foreground uppercase">Name</div>
+      {/* ---- HEADERS ---- */}
+      <div className="grid gap-1 md:gap-2 items-center border-b border-input pb-2" style={{ gridTemplateColumns }}>
+        <div className="text-xs md:text-sm pl-3 font-semibold text-muted-foreground uppercase">Name</div>
         {statHeaders.map(header => (
-          <div key={header} className="text-xs md:text-sm font-semibold text-muted-foreground uppercase text-center">{header}</div>
+          <div key={header} className="text-xs px-1 md:text-sm font-semibold text-muted-foreground uppercase text-center">{header}</div>
         ))}
         {/* Spacer for actions column */}
-        <div className="w-12" aria-hidden="true" />
+        <div className="w-10" aria-hidden="true" />
       </div>
 
       {/* ---- PROFILES LIST (replaces TableBody) ---- */}

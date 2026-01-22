@@ -82,6 +82,6 @@ export const runCalculation = (attackers: Datasheet[], defenders: Datasheet[], m
     });
   });
   console.log("Full calculation results:", results);
-  return results.length > 0 ? results : null;
+  return results;
 };
 

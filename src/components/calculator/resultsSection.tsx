@@ -1,10 +1,12 @@
 import React from 'react'
 import type { CalculationResult } from './types'
 import { formatNumber } from '../../lib/utils';
-import { ChartContainer, type ChartConfig } from '../ui/chart';
-import { Bar, BarChart, ComposedChart, Line, Tooltip, XAxis, YAxis } from 'recharts';
+import { type ChartConfig } from '../ui/chart';
+import { Area, AreaChart, Bar, BarChart, ComposedChart, Line, Tooltip, XAxis, YAxis } from 'recharts';
 import { Button } from '../ui/button';
 import Results from './result';
+import ResultChart from './resultChart';
+import { v4 } from 'uuid';
 
 
 
@@ -19,41 +21,38 @@ const chartConfig = {
   },
 } satisfies ChartConfig
 
-export default function ResultsSection({ results = null }: { results: CalculationResult | null }) {
+export default function ResultsSection({ results = null }: { results: CalculationResult[] | null }) {
   const [, forceUpdate] = React.useReducer(x => x + 1, 0)
 
 
-  const { hits: hitsArray, wounds: woundsArray, unsaved: savesArray } = results || {};
-
   return (
-    <div className='w-full flex gap-4 flex-row overflow-wrap max-w-full'>
-      <Button onClick={forceUpdate}>Redraw</Button>
-      <div className='flex flex-col min-w-60 min-h-60'>
-        <Results label="Hits" array={results?.hits || []} />
-      </div>
-      <div className='flex flex-col min-w-60 min-h-60'>
-        <h4 className='text-lg font-bold'>Wounds</h4>
-        <div className='flex p-2 h-80 min-w-full border rounded-lg'>
-          <ChartContainer config={chartConfig}>
-            <ComposedChart data={woundsArray}>
-              <Bar dataKey="exact" fill={chartConfig.exact.color} yAxisId="right" />
-              <Line yAxisId="left" type="monotone" dataKey="orHigher" stroke={chartConfig.orHigher.color} />
-              <XAxis dataKey="" />
-              <YAxis yAxisId="left" dataKey="orHigher" />
-              <YAxis yAxisId="right" dataKey="exact" orientation='right' />
-              <Tooltip />
-            </ComposedChart>
-          </ChartContainer>
-        </div>
-      </div>
-      {/* <div className='flex flex-col'>
-        <h4 className='text-lg font-bold'>Damage per Model</h4>
-        <p>{damagePerModel}</p>
-      </div>
-      <div className='flex flex-col'>
-        <h4 className='text-lg font-bold'>Total Damage</h4>
-        <p>{totalDamage}</p>
-      </div> */}
+    <div className='w-full flex gap-4 flex-row flex-wrap max-w-full'>
+      {results && results.map((result, index) => (
+        <React.Fragment key={result.attacker + (result.weapon || '') + result.defender}>
+          <div className='w-full h-full'>
+            <div className='ml-2 mb-2 font-semibold text-lg'>
+              {result.attacker} {result.weapon} vs {result.defender}
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 w-full' key={v4()}>
+
+              <ResultChart label="attacks" array={result.attacks || []} />
+
+              <ResultChart label="hits" array={result.hits || []} />
+              <ResultChart label="wounds" array={result.wounds || []} />
+              <ResultChart label="saves" array={result.unsaved || []} />
+              {result.mortalWounds.length > 1 && (
+                <>
+                  <ResultChart label="damage" array={result.damage || []} />
+                  <ResultChart label="mortalWounds" array={result.mortalWounds || []} />
+                </>
+              )
+              }
+              <ResultChart label="totalDamage" array={result.damage || []} />
+            </div>
+          </div>
+          {index < results.length - 1 && <div className="w-full my-2 border-b border-card-surface" />}
+        </React.Fragment>
+      ))}
     </div>
   )
 }

@@ -35,9 +35,9 @@ export type ConsolidatedModifiers = DatasheetModifiers & WeaponProfileModifiers;
 export type DatasheetStats = {
   movement: number;
   toughness: number;
-  wounds: number;
   save: number;
   invulnerableSave: number;
+  wounds: number;
   feelNoPain: number;
 }
 
@@ -69,9 +69,9 @@ export type DatasheetActions = {
 const defaultDatasheetStat: DatasheetStats = {
   movement: 0,
   toughness: 0,
-  wounds: 0,
   save: 0,
   invulnerableSave: 0,
+  wounds: 0,
   feelNoPain: 0,
 }
 
@@ -81,9 +81,9 @@ export const defaultDatasheetModifiers: DatasheetModifiers = {
   rerollSaves: 'none',
   hitModifier: 0,
   woundModifier: 0,
-  criticalWounds: 0,
   sustainedHits: 0,
   criticalHits: 0,
+  criticalWounds: 0,
   cover: false,
   lethalHits: false,
   devastatingWounds: false,

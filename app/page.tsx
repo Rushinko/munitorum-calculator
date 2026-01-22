@@ -2,24 +2,21 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import useToolsStore from "./store";
-import { ChevronDown, PlusIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import DatasheetCard from "@/components/datasheets/customDatasheet";
 import { runCalculation } from "./lib";
-import { type Datasheet, type DatasheetActions } from "@/components/datasheets/types";
-import ModifiersSection from "@/components/datasheets/modifiersSection";
+import { defaultDatasheetModifiers, type Datasheet, type DatasheetActions } from "@/components/datasheets/types";
+import ModifiersSection from "@/components/calculator/modifiersSection";
 import { Card, CardFooter } from "@/components/ui/card/card";
-
-import ResultsSection from "../src/components/calculator/resultsSection";
-import Link from 'next/link';
-import ModifiersBar from '@/components/ui/modifiersBar';
-import { Collapsible } from '@radix-ui/react-collapsible';
-import { CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { useState } from 'react';
+import { findDiff } from '@/lib/utils';
+import ModifierChip from '@/components/datasheets/modifierChip';
+import ResultsCard from '@/components/calculator/resultsCard';
 
 
 const DatasheetList = ({ datasheets, datasheetActions }: { datasheets: Datasheet[], datasheetActions: DatasheetActions }) => {
   return (
-    <motion.div className="flex max-w-full md:max-w-full gap-4 justify-start flex-col">
+    <motion.div className="flex max-w-full md:max-w-full gap-4 h-fit justify-start flex-col">
       <AnimatePresence mode="sync">
         {datasheets.map(ds => (
           <motion.div
@@ -39,7 +36,7 @@ const DatasheetList = ({ datasheets, datasheetActions }: { datasheets: Datasheet
 
 const AttackerDefenderCard = ({ title, onAdd, children }: { title: string, onAdd: () => void, children: React.ReactNode }) => {
   return (
-    <Card className="flex flex-1 w-full flex-col gap-4">
+    <Card className="flex flex-1 h-fit w-full flex-col gap-4">
       <h2 className=" text-xl font-bold sm:ml-2 self-start sm:items-center flex flex-row">{title}
         <Button className=" hidden md:flex ml-2 border-border border" variant="outline" onClick={onAdd}><PlusIcon /></Button>
       </h2>
@@ -48,6 +45,7 @@ const AttackerDefenderCard = ({ title, onAdd, children }: { title: string, onAdd
     </Card>
   );
 }
+
 
 export default function Calculator() {
   const modifiers = useToolsStore(state => state.modifiers);
@@ -94,6 +92,11 @@ export default function Calculator() {
           <Button size="xl" variant="ghost" className="sm:max-w-48 text-md max-w-lg sm:text" onClick={() => setModifiersOpen(true)}>
             Global Modifiers
           </Button>
+          <span className="flex flex-row gap-2 flex-wrap">
+            {Object.keys(findDiff(modifiers, defaultDatasheetModifiers)).map((key) => (
+              <ModifierChip key={key} modifier={key} value={modifiers[key as keyof typeof modifiers]} variant="default" />
+            ))}
+          </span>
         </div>
         <ModifiersSection modifiers={modifiers} updateModifiers={updateModifiers} open={modifiersOpen} setOpen={setModifiersOpen} />
       </Card >
@@ -116,19 +119,11 @@ export default function Calculator() {
 
         </CardFooter>
       </div >
-      {/* {
+      {
         results && (
-          <Card>
-            <CardHeader>
-              <h2 className="text-xl font-bold mx-2">Results</h2>
-            </CardHeader>
-            <Separator />
-            <CardContent>
-              <ResultsSection results={results} />
-            </CardContent>
-          </Card>
+          <ResultsCard results={results} />
         )
-      } */}
+      }
     </div >
   );
 }

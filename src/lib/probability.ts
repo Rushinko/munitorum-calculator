@@ -1,6 +1,6 @@
 import { lgamma } from 'mathjs';
 export type Probabilities = { exact: number[]; orHigher: number[] };
-export type DiceProbability = { exact: number; orHigher: number };
+export type DiceProbability = { exact: number; orHigher: number, roll?: number };
 
 
 /**
@@ -185,7 +185,7 @@ export function getDiceProbabilities(numDice: number, sides: number, target: num
   for (let k = numDice; k >= 0; k--) {
     cumulativeProbability += exactProbs[k];
     // Prepending to the array, or you can push and reverse later
-    results[k] = { exact: exactProbs[k], orHigher: cumulativeProbability };
+    results[k] = { exact: exactProbs[k], orHigher: cumulativeProbability, roll: k };
   }
 
 
@@ -193,7 +193,7 @@ export function getDiceProbabilities(numDice: number, sides: number, target: num
   if (results.length > 0) {
     results[0].orHigher = 1.0;
   }
-
+  // console.log(results);
   return results;
 }
 
@@ -223,6 +223,7 @@ export function getCumulativeProbabilities(probabilities: DiceProbability[], tar
     results[k] = {
       exact: successProbabilityExact[k],
       orHigher: cumulative,
+      roll: (k)
     };
   }
 
@@ -246,7 +247,7 @@ export function trimInsignificantProbabilities(
 ): DiceProbability[] {
   // Find the index of the first element with an 'orHigher' probability
   // below the threshold.
-  if (distribution.length === 0 ) return [];
+  if (distribution.length === 0) return [];
   const trimIndex = distribution.findIndex(p => p.orHigher < threshold);
 
   // If no such element is found (all probabilities are significant),

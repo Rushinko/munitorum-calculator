@@ -4,9 +4,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css"
 import AppBar from "@/components/ui/appbar";
 import { ThemeProvider } from "@/components/theme-provider";
-import useToolsStore from "./store";
-import ModifiersBar from "@/components/ui/modifiersBar";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
